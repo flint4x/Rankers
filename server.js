@@ -1,35 +1,26 @@
 const express = require('express');
 const session = require('express-session');
-const sharedSession = require('express-socket.io-session');
 const http = require('http');
 const path = require('path');
 const { Server } = require('socket.io');
+const sharedSession = require("express-socket.io-session");
 const users = require('./users');
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-// Middleware to parse form data
-app.use(express.urlencoded({ extended: true }));
-
-// Session middleware
+// Middleware
 const sessionMiddleware = session({
   secret: 'supersecretkey',
   resave: false,
   saveUninitialized: false
 });
+app.use(express.urlencoded({ extended: true }));
 app.use(sessionMiddleware);
-
-// Share session with Socket.IO
-io.use(sharedSession(sessionMiddleware, {
-  autoSave: true
-}));
-
-// Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Message history
+// Chat history in memory
 const messageHistory = [];
 
 // Login route
@@ -42,45 +33,50 @@ app.post('/login', (req, res) => {
   return res.redirect('/login.html');
 });
 
-// Protected chat page
-app.get('/chat.html', (req, res) => {
-  if (req.session.user) {
-    return res.sendFile(path.join(__dirname, 'public', 'chat.html'));
-  } else {
-    return res.redirect('/login.html');
+// Session check middleware
+function requireLogin(req, res, next) {
+  if (req.session.user && users[req.session.user]) {
+    return next();
   }
+  res.redirect('/login.html');
+}
+
+// Protected chat route
+app.get('/chat.html', requireLogin, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'chat.html'));
 });
+
+// Share session with Socket.IO
+io.use(sharedSession(sessionMiddleware, {
+  autoSave: true
+}));
 
 // Socket.io connection
 io.on('connection', (socket) => {
-  const session = socket.handshake.session;
+  const username = socket.handshake.session.user;
 
-  if (!session || !session.user || !users[session.user]) {
-    console.log('Unauthorized socket connection');
+  if (!username || !users[username]) {
     return socket.disconnect(true);
   }
 
-  const username = session.user;
-  const userIcon = users[username].icon;
+  const userIcon = users[username].icon || '/images/default.png';
 
+  // Send chat history on connect
   socket.emit('chat history', messageHistory);
 
   socket.on('chat message', (msg) => {
     const fullMsg = {
       user: username,
-      icon: userIcon,
-      text: msg
+      text: msg,
+      icon: userIcon
     };
-    messageHistory.push(fullMsg);
 
-    if (messageHistory.length > 100) {
-      messageHistory.shift();
-    }
+    messageHistory.push(fullMsg);
+    if (messageHistory.length > 100) messageHistory.shift();
 
     io.emit('chat message', fullMsg);
   });
 });
 
-// Start server
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
