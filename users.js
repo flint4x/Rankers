@@ -1,6 +1,15 @@
-// Simple hardcoded users
+// users.js
 module.exports = {
-  "easy": "easyspasswordholygrail",
-  "kyr0": "Johnishoox1",
-  "tacostm": "elite99",
+  "player1": {
+    password: "pass123",
+    icon: "/icons/fire.png"
+  },
+  "proGamer": {
+    password: "elite99",
+    icon: "/icons/crown.png"
+  },
+  "ninja": {
+    password: "stealth",
+    icon: "/icons/ninja.png"
+  }
 };
