@@ -1,5 +1,6 @@
 const express = require('express');
 const session = require('express-session');
+const sharedSession = require('express-socket.io-session');
 const http = require('http');
 const path = require('path');
 const { Server } = require('socket.io');
@@ -13,29 +14,35 @@ const io = new Server(server);
 app.use(express.urlencoded({ extended: true }));
 
 // Session middleware
-app.use(session({
+const sessionMiddleware = session({
   secret: 'supersecretkey',
   resave: false,
   saveUninitialized: false
+});
+app.use(sessionMiddleware);
+
+// Share session with Socket.IO
+io.use(sharedSession(sessionMiddleware, {
+  autoSave: true
 }));
 
-// Serve static files (like your chat UI)
+// Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Store messages in memory (for now)
+// Store messages in memory
 const messageHistory = [];
 
 // Login route
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
   if (users[username] && users[username] === password) {
-    req.session.user = username; // Store username in session
+    req.session.user = username;
     return res.redirect('/chat.html');
   }
   return res.redirect('/login.html');
 });
 
-// Protect the chat page with a session check
+// Protect the chat page
 app.get('/chat.html', (req, res) => {
   if (req.session.user) {
     return res.sendFile(path.join(__dirname, 'public', 'chat.html'));
@@ -44,36 +51,33 @@ app.get('/chat.html', (req, res) => {
   }
 });
 
-// Socket.io connection handling
+// Socket.io connection
 io.on('connection', (socket) => {
-  // Access the session from the request object
-  const username = socket.request.headers.cookie
-    .split(';')
-    .find(cookie => cookie.trim().startsWith('connect.sid='))
-    ?.split('=')[1]; // Extract session ID from cookie
+  const session = socket.handshake.session;
 
-  if (!username) {
-    return socket.disconnect(true); // Disconnect if no session or user found
+  if (!session || !session.user || !users[session.user]) {
+    console.log('Unauthorized socket connection');
+    return socket.disconnect(true);
   }
 
-  // Send chat history to the newly connected user
+  const username = session.user;
+
+  // Send chat history
   socket.emit('chat history', messageHistory);
 
-  // Handle incoming chat messages
+  // Handle chat message
   socket.on('chat message', (msg) => {
     const fullMsg = { user: username, text: msg };
     messageHistory.push(fullMsg);
 
-    // Limit the message history to 100 messages to avoid memory issues
     if (messageHistory.length > 100) {
       messageHistory.shift();
     }
 
-    // Broadcast the message to all connected users
     io.emit('chat message', fullMsg);
   });
 });
 
-// Set up the server to listen on a port
+// Start server
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
