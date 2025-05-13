@@ -4,8 +4,8 @@ module.exports = {
     password: "pass123",
     icon: "/icons/fire.png"
   },
-  "proGamer": {
-    password: "elite99",
+  "kyr0": {
+    password: "Johnishoox",
     icon: "/icons/crown.png"
   },
   "ninja": {
