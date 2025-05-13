@@ -2,20 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Competitive Chatroom</title>
+  <title>Rankers Chatroom</title>
+  <link rel="stylesheet" href="style.css">
   <style>
-    body { font-family: Arial, sans-serif; background: #121212; color: #f0f0f0; padding: 20px; }
-    ul { list-style-type: none; padding: 0; max-height: 400px; overflow-y: auto; }
-    li { padding: 8px; margin-bottom: 10px; display: flex; align-items: center; background: #1e1e1e; border-radius: 5px; }
-    li img { width: 30px; height: 30px; margin-right: 10px; border-radius: 50%; }
-    #form { display: flex; margin-top: 20px; }
-    #input { flex-grow: 1; padding: 10px; font-size: 16px; border-radius: 4px 0 0 4px; border: none; }
-    #form button { padding: 10px; background-color: #4caf50; color: white; border: none; border-radius: 0 4px 4px 0; cursor: pointer; }
+    /* Additional inline styles just for user icons layout */
+    li {
+      display: flex;
+      align-items: center;
+      background-color: #1e1e2f;
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    li img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      margin-right: 10px;
+      border: 2px solid #444;
+    }
+
+    li span {
+      display: inline-block;
+      vertical-align: middle;
+    }
   </style>
 </head>
 <body>
-  <h1>Competitive Chatroom</h1>
+  <h1>💬 Competitive Chatroom</h1>
   <ul id="messages"></ul>
+
   <form id="form" action="">
     <input id="input" autocomplete="off" placeholder="Type your message here..." />
     <button>Send</button>
@@ -37,11 +53,11 @@
       const item = document.createElement('li');
 
       const icon = document.createElement('img');
-      icon.src = msg.icon || '/icons/default.png'; // fallback
+      icon.src = msg.icon || '/icons/default.png';
       icon.alt = 'User icon';
 
       const text = document.createElement('span');
-      text.textContent = `${msg.user}: ${msg.text}`;
+      text.innerHTML = `<strong>${msg.user}:</strong> ${msg.text}`;
 
       item.appendChild(icon);
       item.appendChild(text);
