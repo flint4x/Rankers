@@ -1,17 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Rankers Chatroom</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Competitive Chatroom</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #121212; color: #f0f0f0; padding: 20px; }
+    ul { list-style-type: none; padding: 0; max-height: 400px; overflow-y: auto; }
+    li { padding: 8px; margin-bottom: 10px; display: flex; align-items: center; background: #1e1e1e; border-radius: 5px; }
+    li img { width: 30px; height: 30px; margin-right: 10px; border-radius: 50%; }
+    #form { display: flex; margin-top: 20px; }
+    #input { flex-grow: 1; padding: 10px; font-size: 16px; border-radius: 4px 0 0 4px; border: none; }
+    #form button { padding: 10px; background-color: #4caf50; color: white; border: none; border-radius: 0 4px 4px 0; cursor: pointer; }
+  </style>
 </head>
 <body>
-  <h2>Competitive Chatroom</h2>
+  <h1>Competitive Chatroom</h1>
   <ul id="messages"></ul>
-  <form id="form" autocomplete="off">
-    <input id="input" placeholder="Say something..." />
+  <form id="form" action="">
+    <input id="input" autocomplete="off" placeholder="Type your message here..." />
     <button>Send</button>
   </form>
+
   <script src="/socket.io/socket.io.js"></script>
-  <script src="client.js"></script>
+  <script>
+    const socket = io();
+
+    socket.on('chat history', (history) => {
+      history.forEach(addMessage);
+    });
+
+    socket.on('chat message', (msg) => {
+      addMessage(msg);
+    });
+
+    function addMessage(msg) {
+      const item = document.createElement('li');
+
+      const icon = document.createElement('img');
+      icon.src = msg.icon || '/icons/default.png'; // fallback
+      icon.alt = 'User icon';
+
+      const text = document.createElement('span');
+      text.textContent = `${msg.user}: ${msg.text}`;
+
+      item.appendChild(icon);
+      item.appendChild(text);
+      document.getElementById('messages').appendChild(item);
+    }
+
+    document.getElementById('form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const input = document.getElementById('input');
+      if (input.value.trim()) {
+        socket.emit('chat message', input.value.trim());
+        input.value = '';
+      }
+    });
+  </script>
 </body>
 </html>
