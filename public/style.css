@@ -1,33 +1,106 @@
+/* General Styles */
 body {
-  font-family: Arial, sans-serif;
-  background: #111;
-  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #1e1e2f;
+  color: #f0f0f0;
   text-align: center;
-  padding: 20px;
+  margin: 0;
+  padding: 0;
 }
 
+/* Heading */
+h1, h2 {
+  margin-top: 30px;
+  color: #f8f8f8;
+}
+
+/* Form Styles */
 form {
   margin-top: 20px;
 }
 
+input[type="text"],
+input[type="password"],
 input {
   padding: 10px;
   font-size: 16px;
   width: 70%;
-  border: none;
+  border: 1px solid #444;
+  border-radius: 5px;
+  background-color: #2c2c3d;
+  color: #fff;
+  outline: none;
+  margin-bottom: 10px;
+}
+
+input::placeholder {
+  color: #aaa;
 }
 
 button {
-  padding: 10px;
+  padding: 10px 20px;
   font-size: 16px;
-  background: #28a745;
+  background-color: #28a745;
   color: white;
   border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
+button:hover {
+  background-color: #218838;
+}
+
+/* Chat Styles */
+#form {
+  display: flex;
+  justify-content: center;
+  margin: 20px auto;
+}
+
+#input {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #2c2c3d;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 5px 0 0 5px;
+  outline: none;
+}
+
+#form button {
+  border-radius: 0 5px 5px 0;
+}
+
+/* Messages */
 ul {
   list-style-type: none;
   padding: 0;
-  max-height: 300px;
+  margin: 0 auto;
+  max-width: 600px;
+  max-height: 400px;
   overflow-y: auto;
+  background-color: #2a2a3a;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 20px;
+}
+
+li {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+strong {
+  color: #6ab04c;
+}
+
+/* Landing Page */
+a button {
+  background-color: #007bff;
+}
+
+a button:hover {
+  background-color: #0056b3;
 }
