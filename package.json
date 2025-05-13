@@ -1,5 +1,5 @@
 {
-  "name": "competitive-chatroom",
+  "name": "rankers-chatroom",
   "version": "1.0.0",
   "description": "A chatroom for competitive players",
   "main": "server.js",
@@ -9,6 +9,7 @@
   "dependencies": {
     "express": "^4.18.2",
     "express-session": "^1.17.3",
-    "socket.io": "^4.7.2"
+    "socket.io": "^4.7.2",
+    "express-socket.io-session": "^1.3.5"
   }
 }
