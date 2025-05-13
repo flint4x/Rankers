@@ -29,20 +29,20 @@ io.use(sharedSession(sessionMiddleware, {
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Store messages in memory
+// Message history
 const messageHistory = [];
 
 // Login route
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
-  if (users[username] && users[username] === password) {
+  if (users[username] && users[username].password === password) {
     req.session.user = username;
     return res.redirect('/chat.html');
   }
   return res.redirect('/login.html');
 });
 
-// Protect the chat page
+// Protected chat page
 app.get('/chat.html', (req, res) => {
   if (req.session.user) {
     return res.sendFile(path.join(__dirname, 'public', 'chat.html'));
@@ -61,13 +61,16 @@ io.on('connection', (socket) => {
   }
 
   const username = session.user;
+  const userIcon = users[username].icon;
 
-  // Send chat history
   socket.emit('chat history', messageHistory);
 
-  // Handle chat message
   socket.on('chat message', (msg) => {
-    const fullMsg = { user: username, text: msg };
+    const fullMsg = {
+      user: username,
+      icon: userIcon,
+      text: msg
+    };
     messageHistory.push(fullMsg);
 
     if (messageHistory.length > 100) {
