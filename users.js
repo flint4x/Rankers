@@ -2,14 +2,14 @@
 module.exports = {
   "player1": {
     password: "pass123",
-    icon: "/icons/fire.png"
+    icon: "/images/fire.png"
   },
   "kyr0": {
     password: "Johnishoox",
-    icon: "/icons/crown.png"
+    icon: "/images/crown.png"
   },
   "ninja": {
     password: "stealth",
-    icon: "/icons/ninja.png"
+    icon: "/images/ninja.png"
   }
 };
