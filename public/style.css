@@ -1,0 +1,33 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+}
+
+form {
+  margin-top: 20px;
+}
+
+input {
+  padding: 10px;
+  font-size: 16px;
+  width: 70%;
+  border: none;
+}
+
+button {
+  padding: 10px;
+  font-size: 16px;
+  background: #28a745;
+  color: white;
+  border: none;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
