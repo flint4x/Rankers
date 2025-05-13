@@ -1,7 +1,7 @@
 // users.js
 module.exports = {
-  "player1": {
-    password: "pass123",
+  "Noldra": {
+    password: "Noldra123goat",
     icon: "/images/fire.png"
   },
   "kyr0": {
